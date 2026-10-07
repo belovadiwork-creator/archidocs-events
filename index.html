@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArchiDocs — документы мероприятия</title>
+  <meta name="description" content="Подготовка полного договора и дополнительного соглашения на техническое оснащение мероприятий ArchiLoft.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1528'/%3E%3Cpath d='M8 23V9h8.5a5 5 0 0 1 0 10H12v4H8Zm4-8h4.2a1.8 1.8 0 1 0 0-3.6H12V15Z' fill='%234bc7ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css?v=31">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">A</span><span>ArchiDocs</span></div>
+    <div class="topbar-note"><span class="shield" aria-hidden="true">◆</span> Автосохранение только в этом браузере</div>
+  </header>
+
+  <main class="workspace">
+    <aside class="contract-sidebar" aria-labelledby="contract-sidebar-title">
+      <div class="contract-sidebar-head">
+        <span class="record-kicker">Архив в браузере</span>
+        <h2 id="contract-sidebar-title">Все договоры <span id="contractCount" class="contract-count">0 / 200</span></h2>
+        <p>Сохранённые карточки можно открыть по номеру договора.</p>
+      </div>
+      <nav class="contract-sidebar-list" id="contractSidebarList" aria-label="Сохранённые договоры"></nav>
+      <p class="contract-sidebar-note">Показываются все сохранённые договоры — до 200; список прокручивается. Данные пока хранятся только в этом браузере.</p>
+    </aside>
+
+    <section class="editor" aria-labelledby="deal-heading">
+      <div class="editor-intro">
+        <div class="eyebrow">Новый комплект</div>
+        <h1 id="deal-heading">Документы мероприятия</h1>
+        <p class="lede">Одна карточка заполняет полный договор на аренду и отдельное дополнительное соглашение на техническое оснащение. Стоимость техники в основной договор не попадает.</p>
+      </div>
+
+      <section class="record-panel" aria-labelledby="record-heading">
+        <div class="record-head">
+          <div><span class="record-kicker">Рабочий реестр</span><h2 id="record-heading">Договоры и черновики</h2></div>
+          <span class="save-status" id="cacheStatus" role="status">Черновик сохраняется автоматически</span>
+        </div>
+        <label class="record-select" hidden>Открыть сохранённый договор
+          <select id="savedContractSelect"><option value="">Текущий черновик</option></select>
+        </label>
+        <div class="record-actions">
+          <button class="primary-btn" id="saveContract" type="button">Сохранить договор</button>
+          <button class="secondary-btn" id="newContract" type="button">Новый договор</button>
+          <button class="danger-btn" id="deleteContract" type="button" disabled>Удалить из реестра</button>
+          <button class="danger-btn" id="clearWorkspace" type="button">Очистить локальные данные</button>
+        </div>
+        <p class="record-explanation">Договор и допсоглашение сохраняются одной карточкой. Акты открываются позже из выбранного договора и не мешают создавать новые.</p>
+      </section>
+
+      <form id="deal-form" novalidate>
+        <section class="form-section">
+          <div class="section-heading"><span>01</span><h2>Сделка</h2></div>
+          <div class="field-grid">
+            <label>Номер договора<input id="contractNumber" autocomplete="off" value="Д-19-06-27"></label>
+            <label>Дата договора<input id="contractDate" type="date" value="2026-09-22"></label>
+            <label>Дата допсоглашения<input id="documentDate" type="date" value="2026-09-24"></label>
+            <label>Номер допсоглашения, если есть<input id="addendumNumber" autocomplete="off" placeholder="Например, 1"></label>
+            <label>Начало мероприятия<input id="eventStart" type="datetime-local" value="2027-06-19T06:00"></label>
+            <label>Окончание мероприятия<input id="eventEnd" type="datetime-local" value="2027-06-20T04:00"></label>
+            <label>Гостей<input id="guestCount" type="number" min="1" step="1" value="60"></label>
+            <label>Назначение мероприятия<input id="eventPurpose" value="частное мероприятие"></label>
+            <div class="wide fixed-field" aria-label="Арендуемые пространства">
+              <span>Пространства</span>
+              <strong>LaserSpace и AcrylSpace</strong>
+              <small>Фиксировано договором</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading"><span>02</span><h2>Контрагент</h2></div>
+          <p class="cache-privacy">Реквизиты сохраняются внутри карточки договора по его номеру. В этой версии данные хранятся только в памяти текущего браузера.</p>
+          <div class="segmented" role="radiogroup" aria-label="Тип заказчика">
+            <label><input type="radio" name="partyType" value="person" checked><span>Физическое лицо</span></label>
+            <label><input type="radio" name="partyType" value="company"><span>Юридическое лицо</span></label>
+          </div>
+
+          <div id="personFields" class="field-grid party-fields">
+            <div class="party-form-note wide"><strong>Сторона 2 — физическое лицо</strong><span>В договор попадут паспортные данные и контакты физического лица.</span></div>
+            <label class="wide">ФИО<input id="personName" placeholder="Иванов Иван Иванович"></label>
+            <label>Серия и номер паспорта<input id="passport" placeholder="0000 000000"></label>
+            <label>Дата рождения<input id="birthDate" type="date"></label>
+            <label class="wide">Кем выдан<input id="passportIssuer" placeholder="Наименование органа"></label>
+            <label>Дата выдачи<input id="passportDate" type="date"></label>
+            <label>Код подразделения<input id="passportCode" placeholder="000-000"></label>
+            <label class="wide">Адрес регистрации<textarea id="personAddress" rows="2" placeholder="Индекс, город, улица, дом, квартира"></textarea></label>
+            <label>Телефон (можно без почты)<input id="personPhone" type="tel" placeholder="+7 999 000-00-00"></label>
+            <label>Электронная почта (можно без телефона)<input id="personEmail" type="email" placeholder="name@example.ru"></label>
+          </div>
+
+          <div id="companyFields" class="field-grid party-fields" hidden>
+            <div class="party-form-note wide"><strong>Сторона 2 — юридическое лицо</strong><span>В договор попадут реквизиты организации, контакты и данные подписанта.</span></div>
+            <label class="wide">Полное наименование<input id="companyName" placeholder="ООО «КОМПАНИЯ»"></label>
+            <label>ИНН<input id="companyInn" inputmode="numeric"></label>
+            <label>КПП<input id="companyKpp" inputmode="numeric"></label>
+            <label>ОГРН<input id="companyOgrn" inputmode="numeric"></label>
+            <label class="wide">Юридический адрес<textarea id="companyAddress" rows="2"></textarea></label>
+            <label class="wide">Почтовый адрес<textarea id="companyPostalAddress" rows="2"></textarea></label>
+            <label>Телефон (можно без почты)<input id="companyPhone" type="tel" placeholder="+7 999 000-00-00"></label>
+            <label>Электронная почта (можно без телефона)<input id="companyEmail" type="email" placeholder="info@example.ru"></label>
+            <label class="wide">Банк<input id="companyBank" placeholder="Наименование банка"></label>
+            <label>Расчётный счёт<input id="companyAccount" inputmode="numeric"></label>
+            <label>Корреспондентский счёт<input id="companyCorrespondent" inputmode="numeric"></label>
+            <label>БИК<input id="companyBik" inputmode="numeric"></label>
+            <label class="wide">Подписант<input id="companySigner" placeholder="Иванов Иван Иванович"></label>
+            <label>Должность<input id="companySignerRole" value="генерального директора"></label>
+            <label>Действует на основании<input id="companySignerBasis" value="Устава"></label>
+          </div>
+        </section>
+
+        <section class="form-section services-section">
+          <div class="section-heading"><span>03</span><h2>Техническое оснащение</h2></div>
+          <div class="party-form-note service-note"><strong>Только для дополнительного соглашения</strong><span>Эти позиции и их стоимость не включаются в основной договор аренды. Каталожные цены можно изменить вручную.</span></div>
+          <div class="field-grid technical-period">
+            <label>Начало технических работ<input id="technicalStart" type="datetime-local" value="2027-06-19T06:00"></label>
+            <label>Окончание технических работ<input id="technicalEnd" type="datetime-local" value="2027-06-20T04:00"></label>
+          </div>
+          <div class="catalog-row">
+            <label class="catalog-label">Добавить из каталога
+              <select id="serviceCatalog">
+                <optgroup label="Пакеты по предложению от 26.06.2026">
+                  <option value="minimum">«Минимум» — 45 000 ₽</option>
+                  <option value="basic">«Базовый» до 100–150 гостей — 100 000 ₽</option>
+                  <option value="basicScreen">«Базовый с экраном» — 175 500 ₽</option>
+                  <option value="comfort">«Комфорт+» от 150 гостей — 168 000 ₽</option>
+                  <option value="comfortScreen">«Комфорт+ с экраном» — 240 000 ₽</option>
+                  <option value="allInclusive">«Всё включено ArchiLoft» — 300 000 ₽</option>
+                  <option value="allInclusiveScreen">«Всё включено с экраном» — 385 800 ₽</option>
+                </optgroup>
+                <optgroup label="Отдельные позиции">
+                  <option value="stage">Сцена с монтажом — 15 000 ₽</option>
+                  <option value="laser">Лазерное оборудование / шоу — 60 000 ₽</option>
+                  <option value="screenOffer">Экран 3,5 × 2 м с видеорежиссёром — 86 400 ₽</option>
+                  <option value="mapping">3D-мэппинг, два проектора — 65 000 ₽</option>
+                  <option value="soundDirector">Звукорежиссёр, смена 9 ч — от 25 000 ₽</option>
+                  <option value="lightDirector">Светорежиссёр, смена 9 ч — от 25 000 ₽</option>
+                  <option value="dutyTechnician">Дежурный техник, смена 9 ч — от 15 000 ₽</option>
+                  <option value="remount">Перемонтаж стороннего оборудования — от 10 000 ₽</option>
+                  <option value="screenFixed">Стационарный экран 3,5 × 2 м с видеопультовой — от 60 000 ₽</option>
+                  <option value="screenDelivered">Экран 3,5 × 2 м с доставкой и монтажом — от 178 000 ₽</option>
+                  <option value="screenLarge">Экран 4,5 × 2,5 м с доставкой и монтажом — от 222 000 ₽</option>
+                  <option value="karaoke">Комплект караоке — от 72 500 ₽</option>
+                </optgroup>
+              </select>
+            </label>
+            <button class="secondary-btn" id="addService" type="button">Добавить</button>
+          </div>
+          <button class="custom-service-btn" id="addCustomService" type="button">+ Добавить услугу не из каталога</button>
+          <div class="service-list" id="serviceList" aria-live="polite"></div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading"><span>04</span><h2>Стоимость и сроки оплаты</h2></div>
+          <div class="field-grid">
+            <label>Аренда помещения, ₽<input id="rentAmount" type="number" min="0" step="1" value="150000"></label>
+            <div class="fixed-field"><span>Страховой депозит</span><strong>50 000 ₽</strong><small>Фиксировано</small></div>
+            <div class="fixed-field"><span>НДС</span><strong>5% сверху</strong><small>Начисляется к указанным ценам</small></div>
+            <div class="wide payment-group-title">Оплата по договору аренды</div>
+            <label>Схема оплаты по договору<select id="firstPaymentPercent"><option value="50" selected>50% + 50%</option><option value="100">100% одним платежом</option></select></label>
+            <div class="fixed-field"><span>Первый платёж</span><strong>в течение 3 календарных дней</strong><small>С даты подписания договора</small></div>
+            <div class="fixed-field"><span>Остаток</span><strong>за 14 календарных дней</strong><small>До мероприятия</small></div>
+            <div class="fixed-field"><span>Страховой депозит</span><strong>не позднее начала мероприятия</strong><small>50 000 ₽</small></div>
+            <div class="fixed-field"><span>Дополнительный час</span><strong>20 000 ₽</strong><small>За каждый начатый час</small></div>
+            <div class="wide payment-preview" aria-live="polite">
+              <span>Договор: первый платёж до <strong id="firstPaymentDatePreview">—</strong></span>
+              <span>Договор: остаток до <strong id="finalPaymentDatePreview">—</strong></span>
+              <span>Депозит до <strong id="depositDatePreview">—</strong></span>
+            </div>
+            <div class="wide payment-group-title">Оплата по дополнительному соглашению</div>
+            <label>Схема оплаты по допсоглашению<select id="addendumPaymentPercent"><option value="50" selected>50% + 50%</option><option value="100">100% одним платежом</option></select></label>
+            <div class="fixed-field"><span>Первый платёж</span><strong>в течение 3 календарных дней</strong><small>С даты подписания допсоглашения</small></div>
+            <div class="fixed-field"><span>Остаток</span><strong>за 14 календарных дней</strong><small>До начала технических работ</small></div>
+            <div class="wide payment-preview payment-preview-two" aria-live="polite">
+              <span>Допсоглашение: первый платёж до <strong id="addendumFirstPaymentDatePreview">—</strong></span>
+              <span>Допсоглашение: остаток до <strong id="addendumFinalPaymentDatePreview">—</strong></span>
+            </div>
+          </div>
+        </section>
+        <div hidden aria-hidden="true">
+          <select id="savedPartySelect"><option value=""></option></select>
+          <button id="saveParty" type="button"></button>
+          <input id="depositAmount" value="50000">
+          <input id="vatRate" value="5">
+          <input id="vatMode" value="onTop">
+          <input id="firstPaymentDays" value="3">
+          <input id="finalPaymentDaysBefore" value="14">
+          <input id="depositDaysBefore" value="0">
+          <input id="overtimeRate" value="20000">
+          <input id="addendumPaymentDays" value="3">
+          <input id="addendumFinalDaysBefore" value="14">
+        </div>
+      </form>
+
+      <section class="validation" aria-labelledby="validation-title">
+        <div class="validation-head"><h2 id="validation-title">Проверка</h2><span id="validationCount">0 замечаний</span></div>
+        <ul id="validationList" aria-live="polite"></ul>
+      </section>
+    </section>
+
+    <aside class="preview-panel" aria-label="Предварительный просмотр документа">
+      <div class="preview-toolbar">
+        <div class="document-switcher" role="tablist" aria-label="Вид документа">
+          <button type="button" data-doc="contract" role="tab" class="active" aria-selected="true">Полный договор</button>
+          <button type="button" data-doc="addendum" role="tab">Допсоглашение на технику</button>
+          <button type="button" data-doc="transfer" role="tab">Передача помещения</button>
+          <button type="button" data-doc="return" role="tab">Возврат помещения</button>
+          <button type="button" data-doc="techTransfer" role="tab">Передача техники — при необходимости</button>
+          <button type="button" data-doc="techReturn" role="tab">Возврат техники — при необходимости</button>
+        </div>
+        <div class="export-actions">
+          <button class="word-btn" id="wordButton" type="button">Скачать Word</button>
+          <button class="print-btn" id="printButton" type="button">Печать / PDF</button>
+        </div>
+      </div>
+      <div class="preview-summary" id="previewSummary" aria-live="polite"></div>
+      <article class="paper-stack" id="paper" aria-label="Печатная версия"></article>
+    </aside>
+  </main>
+
+  <dialog class="act-gate" id="actGateDialog" aria-labelledby="actGateTitle">
+    <form method="dialog" class="act-gate-card">
+      <button class="act-gate-close" value="cancel" aria-label="Закрыть">×</button>
+      <div class="act-gate-mark" aria-hidden="true">!</div>
+      <h2 id="actGateTitle">Проверка даты</h2>
+      <p id="actGateMessage"></p>
+      <div class="act-gate-actions">
+        <button class="secondary-btn" value="cancel">Отмена</button>
+        <button class="print-btn" id="actGateConfirm" value="confirm">Подтвердить</button>
+      </div>
+    </form>
+  </dialog>
+
+  <noscript>Для работы формы нужен JavaScript.</noscript>
+  <script src="./app.js?v=31"></script>
+</body>
+</html>
