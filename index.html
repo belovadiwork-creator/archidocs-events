@@ -6,7 +6,7 @@
   <title>ArchiDocs — документы мероприятия</title>
   <meta name="description" content="Подготовка полного договора и дополнительного соглашения на техническое оснащение мероприятий ArchiLoft.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1528'/%3E%3Cpath d='M8 23V9h8.5a5 5 0 0 1 0 10H12v4H8Zm4-8h4.2a1.8 1.8 0 1 0 0-3.6H12V15Z' fill='%234bc7ff'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./styles.css?v=31">
+  <link rel="stylesheet" href="./styles.css?v=43">
 </head>
 <body>
   <header class="topbar">
@@ -179,8 +179,6 @@
           </div>
         </section>
         <div hidden aria-hidden="true">
-          <select id="savedPartySelect"><option value=""></option></select>
-          <button id="saveParty" type="button"></button>
           <input id="depositAmount" value="50000">
           <input id="vatRate" value="5">
           <input id="vatMode" value="onTop">
@@ -206,8 +204,8 @@
           <button type="button" data-doc="addendum" role="tab">Допсоглашение на технику</button>
           <button type="button" data-doc="transfer" role="tab">Передача помещения</button>
           <button type="button" data-doc="return" role="tab">Возврат помещения</button>
-          <button type="button" data-doc="techTransfer" role="tab">Передача техники — при необходимости</button>
-          <button type="button" data-doc="techReturn" role="tab">Возврат техники — при необходимости</button>
+          <button type="button" data-doc="techTransfer" role="tab">Передача техники</button>
+          <button type="button" data-doc="techReturn" role="tab">Возврат техники</button>
         </div>
         <div class="export-actions">
           <button class="word-btn" id="wordButton" type="button">Скачать Word</button>
@@ -233,6 +231,6 @@
   </dialog>
 
   <noscript>Для работы формы нужен JavaScript.</noscript>
-  <script src="./app.js?v=31"></script>
+  <script src="./app.js?v=43"></script>
 </body>
 </html>
