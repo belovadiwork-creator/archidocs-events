@@ -25,7 +25,43 @@ const PROVIDER = {
   authorityValidThrough: "2026-12-31",
 };
 
-const FIXED_SPACES = Object.freeze(["LaserSpace", "AcrylSpace"]);
+const SPACE_CONFIGS = Object.freeze({
+  all: Object.freeze({
+    code: "all",
+    names: Object.freeze(["LaserSpace", "AcrylSpace", "терраса"]),
+    displayName: "LaserSpace и AcrylSpace, терраса",
+    contractObject: "внутренние помещения общей площадью 425,04 кв. м, включая LaserSpace площадью 149,48 кв. м, AcrylSpace площадью 178,65 кв. м и вспомогательные помещения, а также террасу площадью 83 кв. м",
+    appendixSubject: "внутренние помещения общей площадью 425,04 кв. м, включая LaserSpace площадью 149,48 кв. м, AcrylSpace площадью 178,65 кв. м и вспомогательные помещения, а также терраса площадью 83 кв. м",
+    tableText: "LaserSpace и AcrylSpace, вспомогательные помещения — 425,04 кв. м; терраса — 83 кв. м",
+    useObject: "внутренними помещениями общей площадью 425,04 кв. м, включая LaserSpace, AcrylSpace и вспомогательные помещения, а также террасой площадью 83 кв. м",
+    location: "в помещениях LaserSpace и AcrylSpace и на террасе",
+    loads: "AcrylSpace — 750 кг/м², LaserSpace — 500 кг/м², терраса и антресоль — 500 кг/м²",
+  }),
+  acryl: Object.freeze({
+    code: "acryl",
+    names: Object.freeze(["AcrylSpace", "терраса"]),
+    displayName: "AcrylSpace и терраса",
+    contractObject: "внутреннее помещение AcrylSpace площадью 178,65 кв. м и террасу площадью 83 кв. м",
+    appendixSubject: "внутреннее помещение AcrylSpace площадью 178,65 кв. м и терраса площадью 83 кв. м",
+    tableText: "AcrylSpace — 178,65 кв. м; терраса — 83 кв. м",
+    useObject: "внутренним помещением AcrylSpace площадью 178,65 кв. м и террасой площадью 83 кв. м",
+    location: "в помещении AcrylSpace и на террасе",
+    loads: "AcrylSpace — 750 кг/м², терраса — 500 кг/м²",
+  }),
+  laser: Object.freeze({
+    code: "laser",
+    names: Object.freeze(["LaserSpace", "терраса"]),
+    displayName: "LaserSpace и терраса",
+    contractObject: "внутреннее помещение LaserSpace площадью 149,48 кв. м и террасу площадью 83 кв. м",
+    appendixSubject: "внутреннее помещение LaserSpace площадью 149,48 кв. м и терраса площадью 83 кв. м",
+    tableText: "LaserSpace — 149,48 кв. м; терраса — 83 кв. м",
+    useObject: "внутренним помещением LaserSpace площадью 149,48 кв. м и террасой площадью 83 кв. м",
+    location: "в помещении LaserSpace и на террасе",
+    loads: "LaserSpace — 500 кг/м², терраса — 500 кг/м²",
+  }),
+});
+
+const selectedSpaceConfig = () => SPACE_CONFIGS[$("spaceSelection")?.value] || SPACE_CONFIGS.all;
 
 const CATALOG = {
   minimum: { kind: "equipment", name: "Пакет технического оснащения «Минимум»", qty: 1, unit: "компл.", price: 45000 },
@@ -69,7 +105,7 @@ const selectedPartyType = () => q('input[name="partyType"]:checked').value;
 
 const STORAGE_KEY = "archidocs.workspace.v1";
 const FORM_FIELD_IDS = Object.freeze([
-  "contractNumber", "contractDate", "documentDate", "addendumNumber", "eventStart", "eventEnd", "technicalStart", "technicalEnd", "guestCount", "eventPurpose",
+  "contractNumber", "contractDate", "documentDate", "addendumNumber", "eventStart", "eventEnd", "technicalStart", "technicalEnd", "guestCount", "eventPurpose", "spaceSelection",
   "personName", "passport", "birthDate", "passportIssuer", "passportDate", "passportCode", "personAddress", "personPhone", "personEmail",
   "companyName", "companyInn", "companyKpp", "companyOgrn", "companyAddress", "companyPostalAddress", "companyPhone", "companyEmail", "companyBank", "companyAccount",
   "companyCorrespondent", "companyBik", "companySigner", "companySignerRole", "companySignerBasis",
@@ -352,7 +388,7 @@ const renderTransferAct = (data, { sample = false, pageLabel = "" } = {}) => `<s
   <p class="doc-right">${sample ? "<strong>Приложение № 4</strong><br>" : ""}к Договору № ${html(data.contractNumber)} от ${html(formatDateLong(data.contractDate))}</p>
   <p class="doc-kicker">${sample ? "ФОРМА АКТА" : "АКТ"} ПЕРЕДАЧИ ПОМЕЩЕНИЯ</p>
   <div class="doc-meta"><span>г. Москва</span><span>${html(formatDateLong(data.eventStart))}</span></div>
-  <p>Сторона 1 передала, а Сторона 2 приняла внутренние помещения общей площадью 425,04 кв. м и террасу площадью 83 кв. м, а также имущество по Договору № ${html(data.contractNumber)} для Мероприятия с ${html(formatDateTime(data.eventStart))} до ${html(formatDateTime(data.eventEnd))}.</p>
+  <p>Сторона 1 передала, а Сторона 2 приняла ${html(data.space.contractObject)}, а также имущество по Договору № ${html(data.contractNumber)} для Мероприятия с ${html(formatDateTime(data.eventStart))} до ${html(formatDateTime(data.eventEnd))}.</p>
   <div class="doc-lines"><div>Состояние помещения и имущества:</div><div class="doc-line"></div><div class="doc-line"></div><div>Выявленные недостатки и замечания:</div><div class="doc-line"></div><div class="doc-line"></div><div>Дополнительные сведения:</div><div class="doc-line"></div></div>
   <p>При отсутствии замечаний Сторона 2 подтверждает пригодность помещения для согласованной цели и получение имущества в указанной комплектности.</p>
   ${sample ? sampleSignatureBlocks(data.party) : signatureBlocks(data.party)}
@@ -364,7 +400,7 @@ const renderReturnAct = (data, { sample = false, pageLabel = "" } = {}) => `<sec
   <p class="doc-right">${sample ? "<strong>Приложение № 5</strong><br>" : ""}к Договору № ${html(data.contractNumber)} от ${html(formatDateLong(data.contractDate))}</p>
   <p class="doc-kicker">${sample ? "ФОРМА АКТА" : "АКТ"} ВОЗВРАТА ПОМЕЩЕНИЯ</p>
   <div class="doc-meta"><span>г. Москва</span><span>${html(formatDateLong(data.eventEnd))}</span></div>
-  <p>Сторона 2 возвратила, а Сторона 1 приняла внутренние помещения общей площадью 425,04 кв. м, террасу площадью 83 кв. м и имущество после Мероприятия по Договору № ${html(data.contractNumber)}.</p>
+  <p>Сторона 2 возвратила, а Сторона 1 приняла ${html(data.space.contractObject)} и имущество после Мероприятия по Договору № ${html(data.contractNumber)}.</p>
   <div class="doc-lines"><div>Повреждения, утрата имущества и иные замечания:</div><div class="doc-line"></div><div class="doc-line"></div><div>Необходимая уборка / вывоз имущества:</div><div class="doc-line"></div><div class="doc-line"></div><div>Согласованные удержания из депозита:</div><div class="doc-line"></div><div>Иные сведения:</div><div class="doc-line"></div></div>
   <p>Если замечания не указаны, помещение считается возвращённым без видимых повреждений. Это не исключает требований по скрытым повреждениям, которые невозможно было обнаружить при обычном осмотре.</p>
   ${sample ? sampleSignatureBlocks(data.party) : signatureBlocks(data.party)}
@@ -512,9 +548,6 @@ const EVENT_RULES = Object.freeze([
       "линейный лазерный прожектор “LaserBar” SHADOW LASER BAR OBI WAN — 4 шт.",
       "Коммутация",
       "комплект сигнальной и электрической коммутации.",
-      "Учитывая наличие на Площадке статично установленного технического оснащения, Сторона 2 вправе по своему выбору:",
-      "оплатить по отдельному дополнительному соглашению сервисный сбор за привлечение стороннего подрядчика по техническому обеспечению в размере 50 000 (Пятьдесят тысяч) рублей; либо",
-      "заказать у Стороны 1 по отдельному дополнительному соглашению услугу по техническому обеспечению на сумму от 50 000 (Пятьдесят тысяч) рублей.",
       "Любой демонтаж статично установленного на Площадке технического оснащения допускается только при наличии предварительного письменного согласования со Стороной 1. Возможность демонтажа определяется Стороной 1 в каждом конкретном случае индивидуально и зависит от состава, количества, особенностей и объема оборудования, подлежащего демонтажу.",
       "Стоимость, сроки, порядок и техническая возможность демонтажа статично установленного оборудования определяются Стороной 1 дополнительно и согласовываются Сторонами отдельно."
     ]
@@ -668,7 +701,7 @@ const renderContract = (data) => {
       <p>${providerIntro()}, далее — «Сторона 1», с одной стороны, и ${html(data.party.intro)}, далее — «Сторона 2», с другой стороны, совместно именуемые «Стороны», заключили настоящий договор о нижеследующем.</p>
 
       <h3>1. Предмет договора</h3>
-      <p>1.1. Сторона 1 обязуется передать Стороне 2 за плату во временное пользование пространство «АРХИЛОФТ»: внутренние помещения LaserSpace и AcrylSpace общей площадью 425,04 кв. м и террасу площадью 83 кв. м, расположенные по адресу: г. Москва, Сколковское шоссе, д. 31, стр. 4, вместе с находящимся в них движимым имуществом (далее — «Помещение») для проведения мероприятия следующего назначения: ${html(data.eventPurpose)} (далее — «Мероприятие»).</p>
+      <p>1.1. Сторона 1 обязуется передать Стороне 2 за плату во временное пользование пространство «АРХИЛОФТ»: ${html(data.space.contractObject)}, по адресу: г. Москва, Сколковское шоссе, д. 31, стр. 4, вместе с находящимся в Помещении движимым имуществом (далее — «Помещение») для проведения мероприятия следующего назначения: ${html(data.eventPurpose)} (далее — «Мероприятие»).</p>
       <p>1.2. Границы Помещения отмечены на копии поэтажного плана, а состав имущества и технические параметры указаны в Приложении № 1.</p>
       <p>1.3. Передача и возврат Помещения оформляются актами по формам Приложений № 4 и № 5. Право собственности на Помещение и имущество к Стороне 2 не переходит.</p>
       <p>1.4. Право Стороны 1 передавать Помещение в субаренду подтверждается договором аренды недвижимого имущества № 23 от 1 февраля 2025 года, заключённым с ООО «СКОЛКОВО ИНВЕСТ».</p>
@@ -751,8 +784,8 @@ const renderContract = (data) => {
       <p class="doc-right"><strong>Приложение № 1</strong><br>к Договору № ${html(data.contractNumber)} от ${html(formatDateLong(data.contractDate))}</p>
       <p class="doc-kicker">ПЛАН И ОПИСАНИЕ ПОМЕЩЕНИЯ</p>
       <img class="floor-plan" src="./assets/floor-plan.png" alt="Поэтажный план ArchiLoft с экспликацией помещений">
-      <p>1. Передаются внутренние помещения LaserSpace и AcrylSpace общей площадью 425,04 кв. м и терраса площадью 83 кв. м, расположенные по адресу: г. Москва, Сколковское шоссе, д. 31, стр. 4.</p>
-      <p>2. Допустимая нагрузка на перекрытия: AcrylSpace — 750 кг/м², LaserSpace — 500 кг/м², терраса и антресоль — 500 кг/м². Сторона 2 не вправе размещать предметы в положении, количестве или весе, превышающих допустимую нагрузку либо способных повредить Помещение.</p>
+      <p>1. Передаются ${html(data.space.appendixSubject)}, расположенные по адресу: г. Москва, Сколковское шоссе, д. 31, стр. 4.</p>
+      <p>2. Допустимая нагрузка на перекрытия: ${html(data.space.loads)}. Сторона 2 не вправе размещать предметы в положении, количестве или весе, превышающих допустимую нагрузку либо способных повредить Помещение.</p>
       <p>3. Выделенная электрическая мощность — 80 кВт. Точки подключения: 32А 380В 5 pin 3P+PE+N — 2 шт.; 63А 380В 5 pin 3P+PE+N — 1 шт.; уличная силовая розетка 32А 380В 5 pin 3P+PE+N; дополнительное силовое подключение в кухонной зоне — 32А.</p>
       <p>4. Максимальная допустимая нагрузка на один из 13 предустановленных анкеров — 100 кг.</p>
       <p>5. Открытый огонь запрещён. Исключение составляют свечи в торт и холодные фонтаны высотой до 20 см, допускаемые после предварительного письменного согласования со Стороной 1. Гриль или барбекю, иные холодные фонтаны, бенгальские огни и фаер-шоу допускаются только на специально отведённой прилегающей территории и после такого согласования.</p>
@@ -769,13 +802,13 @@ const renderContract = (data) => {
         <tr><th>Период аренды</th><td>${html(formatDateTime(data.eventStart))} — ${html(formatDateTime(data.eventEnd))}</td></tr>
         <tr><th>Продолжительность</th><td>${formatInteger(data.durationHours)} ч.</td></tr>
         <tr><th>Количество гостей</th><td>${formatInteger(data.guestCount)}</td></tr>
-        <tr><th>Пространства</th><td>LaserSpace и AcrylSpace — 425,04 кв. м; терраса — 83 кв. м</td></tr>
+        <tr><th>Пространства</th><td>${html(data.space.tableText)}</td></tr>
         <tr><th>Назначение</th><td>${html(data.eventPurpose)}</td></tr>
         <tr><th>Субаренда</th><td>${html(serviceTotalWording(rentTotals))}</td></tr>
         <tr><th>Страховой депозит</th><td>${formatMoney(data.depositAmount)} руб., возвратный</td></tr>
       </tbody></table>
       <p><strong>Итого по Договору: ${formatMoney(contractTotals.net)} руб.</strong> НДС 5% уплачивается дополнительно сверх указанной суммы.</p>
-      <p>В стоимость субаренды входят пользование внутренними помещениями LaserSpace и AcrylSpace общей площадью 425,04 кв. м, террасой площадью 83 кв. м и указанным в Приложении № 1 имуществом; парковка на прилегающей территории вместимостью до 6–7 автомобилей; базовый клининг до, во время и после Мероприятия; работа администратора площадки и технического менеджера в части эксплуатации Помещения; помощь персонала площадки при расстановке мебели лофта во время монтажа и демонтажа.</p>
+      <p>В стоимость субаренды входят пользование ${html(data.space.useObject)} и указанным в Приложении № 1 имуществом; парковка на прилегающей территории вместимостью до 6–7 автомобилей; базовый клининг до, во время и после Мероприятия; работа администратора площадки и технического менеджера в части эксплуатации Помещения; помощь персонала площадки при расстановке мебели лофта во время монтажа и демонтажа.</p>
       <p>Техническое оснащение и услуги в указанную сумму не входят и оформляются отдельным дополнительным соглашением.</p>
       <p>${contractSignedTooLate ? `Оплата 100%: ${formatMoney(contractTotals.net)} руб. в течение 3 календарных дней с даты подписания, но до начала Мероприятия.` : firstPercent === 100 ? `Оплата 100%: ${formatMoney(contractTotals.net)} руб. до ${html(formatDateLong(data.firstPaymentDate))}, но до начала Мероприятия.` : `Первый платёж 50%: ${formatMoney(firstPayment)} руб. до ${html(formatDateLong(data.firstPaymentDate))}. Остаток 50%: ${formatMoney(finalPayment)} руб. до ${html(formatDateLong(data.finalPaymentDate))}.`} НДС 5% уплачивается дополнительно сверх каждого указанного платежа. Депозит: ${formatMoney(data.depositAmount)} руб. не позднее начала Мероприятия.</p>
       ${signatureBlocks(data.party)}
@@ -805,7 +838,7 @@ const renderAddendum = (data) => {
     <p>${providerIntro()}, далее — «Сторона 1», с одной стороны, и ${html(data.party.intro)}, далее — «Сторона 2», с другой стороны, совместно именуемые «Стороны», заключили настоящее дополнительное соглашение к Договору о нижеследующем.</p>
 
     <h3>1. Техническое обеспечение</h3>
-    <p>1.1. Сторона 1 предоставляет Стороне 2 техническое оборудование и оказывает услуги для мероприятия следующего назначения: ${html(data.eventPurpose)}, проводимого в помещениях LaserSpace и AcrylSpace и на террасе по адресу: г. Москва, Сколковское шоссе, д. 31, стр. 4, в период с ${html(formatDateTime(data.technicalStart))} до ${html(formatDateTime(data.technicalEnd))}.</p>
+    <p>1.1. Сторона 1 предоставляет Стороне 2 техническое оборудование и оказывает услуги для мероприятия следующего назначения: ${html(data.eventPurpose)}, проводимого ${html(data.space.location)} по адресу: г. Москва, Сколковское шоссе, д. 31, стр. 4, в период с ${html(formatDateTime(data.technicalStart))} до ${html(formatDateTime(data.technicalEnd))}.</p>
     <p>1.2. Состав и стоимость технического обеспечения:</p>
     <table class="doc-table"><thead><tr><th>№</th><th>Оборудование и услуги</th><th>Кол-во</th><th>Ед.</th><th>Цена, руб.</th><th>Сумма, руб.</th></tr></thead><tbody>${serviceRowsHtml()}</tbody></table>
     <p>1.3. Стоимость технического обеспечения составляет <strong>${formatMoney(technicalTotals.net)} руб.</strong> (${html(amountInWords(technicalTotals.net))}). НДС 5% уплачивается дополнительно сверх указанной суммы. Стоимость оплачивается отдельно от арендной платы по Договору.</p>
@@ -1083,7 +1116,8 @@ const getData = () => {
     durationHours: hoursBetween(eventStart, eventEnd),
     guestCount: numberValue("guestCount"),
     eventPurpose: textValue("eventPurpose") || "частное мероприятие",
-    spaces: [...FIXED_SPACES],
+    space: selectedSpaceConfig(),
+    spaces: [...selectedSpaceConfig().names],
     party: currentParty(),
     rentAmount: numberValue("rentAmount"),
     depositAmount: numberValue("depositAmount"),
@@ -1787,7 +1821,7 @@ const renderPreview = () => {
   $("addendumFirstPaymentDatePreview").textContent = formatDateLong(data.addendumFirstPaymentDate);
   $("addendumFinalPaymentDatePreview").textContent = formatDateLong(data.addendumFinalPaymentDate);
   const summaries = {
-    contract: `только аренда ${formatMoney(totalsFor(data.rentAmount).net)} ₽ + НДС 5% · мероприятие ${formatInteger(data.durationHours)} ч.`,
+    contract: `${data.space.displayName} · аренда ${formatMoney(totalsFor(data.rentAmount).net)} ₽ + НДС 5% · мероприятие ${formatInteger(data.durationHours)} ч.`,
     addendum: `${services.length} ${declension(services.length, ["позиция", "позиции", "позиций"])} · техническое оснащение ${formatMoney(serviceTotals.net)} ₽ + НДС 5%`,
     transfer: `1 страница · подписываемый акт передачи · ${formatDateLong(data.eventStart)}`,
     return: `1 страница · подписываемый акт возврата · ${formatDateLong(data.eventEnd)}`,
@@ -2051,6 +2085,7 @@ const registerWebMCP = () => {
           eventEnd: { type: "string", description: "Дата и время YYYY-MM-DDTHH:mm" },
           technicalStart: { type: "string", description: "Начало технических работ YYYY-MM-DDTHH:mm" },
           technicalEnd: { type: "string", description: "Окончание технических работ YYYY-MM-DDTHH:mm" },
+          spaceSelection: { type: "string", enum: ["all", "acryl", "laser"], description: "Арендуемые зоны: все, AcrylSpace или LaserSpace" },
           partyType: { type: "string", enum: ["person", "company"] },
           personName: { type: "string" },
           passport: { type: "string" },
@@ -2100,6 +2135,7 @@ const registerWebMCP = () => {
         setIfPresent(input, "eventEnd", "eventEnd");
         setIfPresent(input, "technicalStart", "technicalStart");
         setIfPresent(input, "technicalEnd", "technicalEnd");
+        setIfPresent(input, "spaceSelection", "spaceSelection");
         setIfPresent(input, "firstPaymentPercent", "firstPaymentPercent");
         setIfPresent(input, "addendumPaymentPercent", "addendumPaymentPercent");
         if (input.partyType === "person" || input.partyType === "company") {
@@ -2132,6 +2168,8 @@ const registerWebMCP = () => {
         return {
           contractNumber: data.contractNumber,
           party: data.party.name,
+          spaceSelection: data.space.code,
+          spaces: data.space.displayName,
           eventStart: data.eventStart?.toISOString() || null,
           eventEnd: data.eventEnd?.toISOString() || null,
           rentTotal: totalsFor(data.rentAmount).total,
